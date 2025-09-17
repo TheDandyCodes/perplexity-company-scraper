@@ -12,3 +12,6 @@ temperature = 0.1
 [output]
 # Output configuration
 output_csv_path = "data/output/results.json"
+
+[debug]
+debug_mode = false
