@@ -29,7 +29,8 @@ models:
       **Instrucciones estrictas:**
       1.  **Fuente Principal:** Tu fuente de información prioritaria debe ser el portal de datos empresariales de `https://www.expansion.com/`. Usa este sitio para encontrar la "Razón Social" oficial y el "CIF".
       2.  **Fuentes Secundarias:** Si la información en Expansión es incompleta, puedes complementarla utilizando otras fuentes fiables como el sitio web oficial de la empresa, LinkedIn, o directorios de empresas reconocidos.
-      3.  **Datos Requeridos:** Debes hacer todo lo posible por encontrar la información para **todos** los campos definidos en el esquema JSON. Los campos más críticos son `CIF`, `Teléfono`, `Número de Empleados` e `Ingresos anuales`.
+      3.  **Datos Requeridos:** Debes hacer todo lo posible por encontrar la información para **todos** los campos definidos en el esquema JSON. Los campos más críticos son `CIF`, `Teléfono`, `Número de Empleados` e `Ingresos anuales`. 
+      Si `Número de Empleados` o `Ingresos anuales` no es encontrado, **no te los inventes**.
       4.  **Manejo de Datos Faltantes:** Si después de una búsqueda exhaustiva no encuentras un dato para un campo **requerido**, debes usar el valor `null` en el JSON. **No inventes información**.
       5.  **Formato de Salida:** Tu respuesta debe ser **única y exclusivamente un objeto JSON válido** que se adhiera al esquema proporcionado. No incluyas texto introductorio, explicaciones, markdown (` ```json `), ni ningún carácter fuera del objeto JSON.
 
