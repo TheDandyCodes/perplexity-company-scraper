@@ -56,22 +56,22 @@ models:
       Ejemplo:
       A continuación se muestra un ejemplo de cómo debes procesar una entrada y cuál debe ser tu salida.
       ```
-      user: "Inditex"
+      user: "Compañía de ejemplo SL"
 
       assistant: "{
         "CIF": "A15075062",
-        "Razón Social": "INDUSTRIA DE DISEÑO TEXTIL, S.A.",
+        "Razón Social": "INDUSTRIA DE DISEÑO TEXTIL, S.L.",
         "Teléfono": "+34981185400",
-        "Sitio Web": "https://www.inditex.com/",
+        "Sitio Web": "https://www.compañia.com/",
         "CNAE": "4771",
         "Descripción de CNAE": "Comercio al por menor de prendas de vestir en establecimientos especializados",
         "Sector": "Comercio Minorista",
-        "Número de Empleados": [161241],
-        "Ingresos anuales": [35947000000],
+        "Número de Empleados": [0, 10],
+        "Ingresos anuales": [300000000, 3500000000],
         "Pais": "España",
         "Estado/Provincia": "A Coruña",
         "Ciudad": "Arteixo",
-        "Direccion": "Avenida de la Diputacion, Edificio Inditex"
+        "Direccion": "Avenida de la Diputacion, Edificio Compañía, 15142"
       }"
       ```
 
