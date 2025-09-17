@@ -120,18 +120,8 @@ The output file is a CSV with structured data for each company, including the fi
 To install new dependencies or update existing ones:
 
 ```bash
-uv pip install <package>
+uv add <package>
 uv sync
 ```
 
 This will automatically update `pyproject.toml` and `uv.lock`.
-
-## Requirements
-
-- Python 3.10+
-- Perplexity API key
-- Internet connection
-
-## License
-
-MIT
