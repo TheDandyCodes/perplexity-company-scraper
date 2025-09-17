@@ -1,179 +1,137 @@
+
+
 # Perplexity Company Scraper
 
-A Python script that reads company names from a CSV file and fetches structured company information using the Perplexity AI API.
+This project extracts structured information about Spanish companies using the Perplexity AI API. The main workflow reads company names from a CSV file and queries the API to obtain relevant data, saving the results in JSON format.
 
 ## Features
 
-- Reads CSV file path from `config.toml` configuration
-- Makes structured API calls to Perplexity for each company in the dataset
-- Returns structured JSON data with company information
-- Configurable API parameters and output settings
-- Comprehensive logging and error handling
-
-## Setup
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Set up your environment variables:
-   ```bash
-   cp .env.example .env
-   # Edit .env and add your Perplexity API key
-   ```
-
-4. Configure the script by editing `config.toml`:
-   - Set the path to your CSV file
-   - Specify which column contains company names
-   - Adjust API parameters as needed
-
-## Configuration
-
-### config.toml
-```toml
-[data]
-csv_path = "data/companies.csv"        # Path to your CSV file
-target_column = "company_name"         # Column name to use for queries
-
-[api]
-model = "llama-3.1-sonar-small-128k-online"  # Perplexity model to use
-max_tokens = 1000                      # Maximum response tokens
-temperature = 0.1                      # Response temperature
-
-[output]
-output_path = "output/results.json"    # Where to save results
-```
-
-### .env
-```
-PERPLEXITY_API_KEY=your_perplexity_api_key_here
-```
-
-## Usage
-
-### Quick Start
-
-1. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. **Try the demo (no API key needed):**
-   ```bash
-   python scraper.py --demo
-   ```
-
-3. **For production use:**
-   ```bash
-   # Set up your API key
-   cp .env.example .env
-   # Edit .env and add your Perplexity API key
-   
-   # Run the scraper
-   python scraper.py
-   ```
-
-### Command Line Options
-
-```bash
-python scraper.py [options]
-
-Options:
-  -h, --help            Show help message
-  -c CONFIG, --config   Path to configuration file (default: config.toml)
-  --demo               Run in demo mode with mock data (no API key required)
-  -v, --verbose        Enable verbose logging
-
-Examples:
-  python scraper.py                    # Use default config.toml
-  python scraper.py -c custom.toml     # Use custom configuration file
-  python scraper.py --demo             # Run in demo mode (no API key needed)
-```
-
-### Validation
-
-Test your setup without making API calls:
-```bash
-python test_setup.py
-```
-
-This will validate:
-- Configuration file loading
-- CSV file accessibility  
-- Target column existence
-- File structure integrity
-
-## Output Format
-
-The output JSON file contains an array of results, where each item includes:
-- `row_index`: Original row number from CSV
-- `original_data`: Complete original row data from CSV
-- `api_result`: Structured company information from Perplexity
-- `timestamp`: When the query was processed
-
-Example output structure:
-```json
-[
-  {
-    "row_index": 0,
-    "original_data": {
-      "company_name": "Apple Inc",
-      "location": "Cupertino CA",
-      "sector": "Technology"
-    },
-    "api_result": {
-      "success": true,
-      "data": {
-        "company_name": "Apple Inc.",
-        "industry": "Technology",
-        "headquarters": "Cupertino, California",
-        "founded_year": 1976,
-        "employee_count": "164,000+",
-        "revenue": "$394.3 billion (2022)",
-        "description": "Multinational technology company...",
-        "website": "https://www.apple.com"
-      }
-    },
-    "timestamp": "2024-01-01T12:00:00"
-  }
-]
-```
-
-## Error Handling
-
-The script includes comprehensive error handling for:
-- Missing configuration files
-- Invalid CSV files or missing columns
-- API request failures
-- JSON parsing errors
-- Network connectivity issues
-
-All errors are logged with timestamps and detailed error messages.
-
-## Requirements
-
-- Python 3.7+
-- Perplexity AI API key
-- Internet connection for API calls
-
-See `requirements.txt` for Python package dependencies.
+- Flexible configuration via `config.toml`.
+- Customizable prompts per model in `prompts.yaml`.
+- Data extraction with JSON schema validation.
+- Modern dependency management with [uv](https://github.com/astral-sh/uv).
+- Modular scripts: `ppl_scrapper.py` (main), `utils.py` (utilities).
+- Support for logging and debug mode.
 
 ## Project Structure
 
 ```
 perplexity-company-scraper/
-├── README.md              # This documentation
-├── requirements.txt       # Python dependencies
-├── .env.example          # Environment variables template
-├── .gitignore           # Git ignore rules
-├── config.toml          # Configuration file
-├── scraper.py           # Main scraper script
-├── demo.py              # Demo script with mock data
-├── test_setup.py        # Validation script
+├── README.md
+├── config.toml
+├── ppl_scrapper.py
+├── prompts.yaml
+├── utils.py
+├── pyproject.toml
+├── uv.lock
 ├── data/
-│   └── companies.csv    # Sample CSV file
-└── output/
-    └── results.json     # Generated results (ignored by git)
+│   ├── input/
+│   │   └── companies.csv
+│   └── output/
+│       └── results.json
+├── notebooks/
+│   └── playground.ipynb
+└── __pycache__/
 ```
+
+## Installation & Dependencies
+
+This project uses [uv](https://github.com/astral-sh/uv) for dependency management (faster and safer than pip).
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/TheDandyCodes/perplexity-company-scraper.git
+   cd perplexity-company-scraper
+   ```
+
+2. Install uv (if you don't have it):
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+3. Install dependencies:
+   ```bash
+   uv sync
+   ```
+
+## Configuration
+
+### 1. Environment Variables
+
+Create a `.env` file in the root and add your API key:
+```
+PERPLEXITY_API_KEY=your_perplexity_api_key
+```
+
+### 2. Configuration file (`config.toml`)
+
+Example:
+```toml
+[data]
+input_csv_path = "data/input/companies.csv"   # Path to input CSV
+target_column = "Cuenta"                      # Column with company name
+
+[model]
+model_name = "sonar-pro"                      # Perplexity model to use
+temperature = 0.1
+
+[output]
+output_csv_path = "data/output/results.json"  # Output path
+
+[debug]
+debug_mode = false
+```
+
+### 3. Customizable prompts (`prompts.yaml`)
+
+Define prompts for each model and the expected response format. You can adapt the messages for each model as needed.
+
+## Usage
+
+1. Make sure your API key is in `.env` and your configuration is correct in `config.toml`.
+2. Place your companies CSV file in `data/input/companies.csv` (or the path you define).
+3. Run the main script:
+   ```bash
+   python ppl_scrapper.py
+   ```
+
+The script will process the companies, query the API, and save the results in `data/output/results.json`.
+
+## Output
+
+The output file is a CSV with structured data for each company, including the fields required by the JSON schema:
+
+- `Cuenta`: Original company name
+- `CIF`, `Razón Social`, `Teléfono`, `Sitio Web`, `CNAE`, `Descripción de CNAE`, `Sector`, `Número de Empleados min`, `Número de Empleados max`, `Ingresos anuales min`, `Ingresos anuales max`, `Pais`, `Estado/Provincia`, `Ciudad`, `Direccion`
+
+## Main Scripts
+
+- `ppl_scrapper.py`: Main script that loads data, queries the API, and saves results.
+- `utils.py`: Helper functions for loading prompts and other utilities.
+
+## Advanced Notes
+
+- You can modify prompts in `prompts.yaml` to adapt model behavior.
+- The script uses the column defined in `target_column` to look up the company name.
+- Debug mode shows the cost of each query if `debug_mode = true` in `config.toml`.
+
+## Updating Dependencies
+
+To install new dependencies or update existing ones:
+
+```bash
+uv pip install <package>
+uv sync
+```
+
+This will automatically update `pyproject.toml` and `uv.lock`.
+
+## Requirements
+
+- Python 3.10+
+- Perplexity API key
+- Internet connection
+
+## License
+
+MIT
