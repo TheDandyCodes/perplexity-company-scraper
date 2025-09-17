@@ -53,18 +53,57 @@ PERPLEXITY_API_KEY=your_perplexity_api_key_here
 
 ## Usage
 
-1. Prepare your CSV file with company names
-2. Update `config.toml` with the correct path and column name
-3. Run the scraper:
+### Quick Start
+
+1. **Install dependencies:**
    ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Try the demo (no API key needed):**
+   ```bash
+   python scraper.py --demo
+   ```
+
+3. **For production use:**
+   ```bash
+   # Set up your API key
+   cp .env.example .env
+   # Edit .env and add your Perplexity API key
+   
+   # Run the scraper
    python scraper.py
    ```
 
-The script will:
-- Read the CSV file specified in the configuration
-- Process each company name in the specified column
-- Query Perplexity API for structured company information
-- Save results to the output file in JSON format
+### Command Line Options
+
+```bash
+python scraper.py [options]
+
+Options:
+  -h, --help            Show help message
+  -c CONFIG, --config   Path to configuration file (default: config.toml)
+  --demo               Run in demo mode with mock data (no API key required)
+  -v, --verbose        Enable verbose logging
+
+Examples:
+  python scraper.py                    # Use default config.toml
+  python scraper.py -c custom.toml     # Use custom configuration file
+  python scraper.py --demo             # Run in demo mode (no API key needed)
+```
+
+### Validation
+
+Test your setup without making API calls:
+```bash
+python test_setup.py
+```
+
+This will validate:
+- Configuration file loading
+- CSV file accessibility  
+- Target column existence
+- File structure integrity
 
 ## Output Format
 
@@ -120,3 +159,21 @@ All errors are logged with timestamps and detailed error messages.
 - Internet connection for API calls
 
 See `requirements.txt` for Python package dependencies.
+
+## Project Structure
+
+```
+perplexity-company-scraper/
+├── README.md              # This documentation
+├── requirements.txt       # Python dependencies
+├── .env.example          # Environment variables template
+├── .gitignore           # Git ignore rules
+├── config.toml          # Configuration file
+├── scraper.py           # Main scraper script
+├── demo.py              # Demo script with mock data
+├── test_setup.py        # Validation script
+├── data/
+│   └── companies.csv    # Sample CSV file
+└── output/
+    └── results.json     # Generated results (ignored by git)
+```

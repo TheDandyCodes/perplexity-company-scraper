@@ -241,8 +241,56 @@ class CompanyScraper:
 
 def main():
     """Main entry point."""
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description="Perplexity Company Scraper - Extract structured company information from CSV files",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python scraper.py                    # Use default config.toml
+  python scraper.py -c custom.toml     # Use custom configuration file
+  python scraper.py --demo             # Run in demo mode (no API key needed)
+        """
+    )
+    
+    parser.add_argument(
+        "-c", "--config",
+        default="config.toml",
+        help="Path to configuration file (default: config.toml)"
+    )
+    
+    parser.add_argument(
+        "--demo",
+        action="store_true",
+        help="Run in demo mode with mock data (no API key required)"
+    )
+    
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Enable verbose logging"
+    )
+    
+    args = parser.parse_args()
+    
+    # Set logging level
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+    
+    # Run demo mode if requested
+    if args.demo:
+        try:
+            import demo
+            demo.run_demo()
+            return
+        except ImportError:
+            logger.error("Demo module not found")
+            exit(1)
+    
+    # Normal operation
     try:
-        scraper = CompanyScraper()
+        scraper = CompanyScraper(args.config)
         scraper.run()
     except Exception as e:
         logger.error(f"Application failed: {str(e)}")
