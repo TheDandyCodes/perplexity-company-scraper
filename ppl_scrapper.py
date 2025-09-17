@@ -95,7 +95,7 @@ if __name__ == "__main__":
     import time
     from tqdm import tqdm
 
-    companies_df = pd.read_csv(CONFIG["data"]["input_csv_path"]).head(1)
+    companies_df = pd.read_csv(CONFIG["data"]["input_csv_path"]).head(2)
 
     required_cols = list(company_info_json_schema["properties"].keys())
 
@@ -122,8 +122,10 @@ if __name__ == "__main__":
             )
             # Print cost
             total_cost = response["usage"]["cost"]["total_cost"]
-            print("\n\033[92m{} $ used in this request\033[0m\n".format(total_cost))
             list_of_costs.append(total_cost)
+            # Print cost if in debug mode
+            if CONFIG["debug"]["debug_mode"]:
+                print("\n\033[92m{} $ used in this request\033[0m\n".format(total_cost))
     
             content = response["choices"][0]["message"]["content"]
             try:
