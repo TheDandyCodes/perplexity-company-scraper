@@ -8,4 +8,5 @@ dependencies = [
     "instructor[perplexity]>=1.11.3",
     "openai>=1.107.3",
     "pandas>=2.3.2",
+    "pip>=25.2",
 ]
