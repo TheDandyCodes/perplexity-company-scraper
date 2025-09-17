@@ -1,0 +1,16 @@
+[data]
+# Path to the CSV file to process
+csv_path = "data/companies.csv"
+
+# Column name in the CSV to use for API queries
+target_column = "company_name"
+
+[api]
+# Perplexity API settings
+model = "llama-3.1-sonar-small-128k-online"
+max_tokens = 1000
+temperature = 0.1
+
+[output]
+# Output configuration
+output_path = "output/results.json"
