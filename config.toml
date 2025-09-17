@@ -11,4 +11,4 @@ temperature = 0.1
 
 [output]
 # Output configuration
-output_path = "data/output/results.json"
+output_csv_path = "data/output/results.json"
