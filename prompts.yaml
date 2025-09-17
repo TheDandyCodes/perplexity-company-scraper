@@ -1,0 +1,29 @@
+models:
+  llama-3.1-sonar-small-128k-online:
+    system: |
+      Eres un asistente útil que proporciona información estructurada sobre empresas en formato JSON.
+    user: |
+      Proporciona información estructurada sobre la empresa "{company_name}" en formato JSON.
+      Incluye los siguientes campos si están disponibles:
+        - company_name: Nombre oficial de la empresa
+        - industry: Sector industrial principal
+        - headquarters: Ubicación de la sede
+        - founded_year: Año de fundación
+        - employee_count: Número aproximado de empleados
+        - revenue: Ingresos anuales (si es pública)
+        - description: Breve descripción de la empresa
+        - website: URL oficial del sitio web
+      Si la información no está disponible, utiliza null para ese campo.
+      Devuelve solo JSON válido sin texto adicional.
+
+  gpt-4:
+    system: |
+      Eres un asistente experto en datos empresariales. Responde siempre en JSON estructurado.
+    user: |
+      Dame información detallada sobre la empresa "{company_name}". Incluye los campos relevantes y responde solo con JSON válido.
+
+  mistral-large:
+    system: |
+      Eres un asistente que responde con datos empresariales en formato JSON, sin texto adicional.
+    user: |
+      Genera un resumen estructurado de la empresa "{company_name}". Si falta información, usa null. Responde solo con JSON.
