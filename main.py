@@ -1,10 +1,13 @@
-from cor_generative_extraction import GeminiHandler, PerplexityHandler, FallbackHandler
-from dotenv import load_dotenv
-import toml
-from utils import load_prompts
-import pandas as pd
 import random
 import time
+
+import pandas as pd
+import toml
+from dotenv import load_dotenv
+
+from cor_generative_extraction import FallbackHandler, GeminiHandler, PerplexityHandler
+from utils import load_prompts
+
 load_dotenv()
 CONFIG = toml.load("config.toml")
 PROMPTS = load_prompts("prompts.yaml")
@@ -15,13 +18,16 @@ HANDLER_MAPPING = {
     "fallback": FallbackHandler,
 }
 
+
 def build_chain_from_config():
     """Read the config and build the chain of handlers."""
-    
-    try: 
+
+    try:
         model_chain = CONFIG["chain_of_responsability"]["model_chain"]
     except KeyError:
-        raise ValueError("Configuration for chain_of_responsability is missing or incomplete.")
+        raise ValueError(
+            "Configuration for chain_of_responsability is missing or incomplete."
+        )
 
     # Instance first handler
     first_handler = HANDLER_MAPPING[model_chain[0]]()
@@ -32,26 +38,28 @@ def build_chain_from_config():
         next_handler = HANDLER_MAPPING[model_name]()
         current_handler.set_next(next_handler)
         current_handler = next_handler
-        
+
     return first_handler
 
 
 if __name__ == "__main__":
     chain_head = build_chain_from_config()
-    
+
     companies_df = pd.read_csv(CONFIG["data"]["input_csv_path"])
 
-    required_cols = [col for col in companies_df.columns if col != "Cuenta"]
+    target_col = CONFIG["target_column"]["col_name"]
+    required_cols = [col for col in companies_df.columns if col != target_col]
 
     completed_jsonl = []
     list_of_costs = []
     for idx, row in companies_df.iterrows():
-
-        print(f"\n--- Procesando: {row['Cuenta']} ---")
-        result = chain_head.handle(row["Cuenta"])
+        print(f"\n--- Processing: {row[target_col]} ---")
+        result = chain_head.handle(row[target_col])
         # Process range fields
         for range_col in ["Número de Empleados", "Ingresos anuales"]:
-            if result.get(range_col, None) is not None and isinstance(result[range_col], list):
+            if result.get(range_col, None) is not None and isinstance(
+                result[range_col], list
+            ):
                 if len(result[range_col]) > 1:
                     result[f"{range_col} min"] = result[range_col][0]
                     result[f"{range_col} max"] = result[range_col][-1]
@@ -60,7 +68,7 @@ if __name__ == "__main__":
                     result[f"{range_col} max"] = result[range_col][0]
 
         jsonl = {
-            "Cuenta": row["Cuenta"],
+            target_col: row[target_col],
             **result,
         }
         completed_jsonl.append(jsonl)
