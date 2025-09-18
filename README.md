@@ -1,16 +1,18 @@
 
 
+
 # Perplexity Company Scraper
 
-This project extracts structured information about Spanish companies using the Perplexity AI API. The main workflow reads company names from a CSV file and queries the API to obtain relevant data, saving the results in JSON format.
+This project extracts structured information about Spanish companies using generative APIs (such as Perplexity and Gemini) and the **Chain of Responsibility** design pattern for flexible model management and error handling.
 
-## Features
+## Main Features
 
+- Data extraction using a configurable chain of models (Chain of Responsibility).
 - Flexible configuration via `config.toml`.
 - Customizable prompts per model in `prompts.yaml`.
-- Data extraction with JSON schema validation.
+- Data validation with JSON schema.
 - Modern dependency management with [uv](https://github.com/astral-sh/uv).
-- Modular scripts: `ppl_scrapper.py` (main), `utils.py` (utilities).
+- Modular scripts: `main.py` (main), `cor_generative_extraction.py` (handlers and COR logic), `utils.py` (utilities).
 - Support for logging and debug mode.
 
 ## Project Structure
@@ -19,6 +21,8 @@ This project extracts structured information about Spanish companies using the P
 perplexity-company-scraper/
 ├── README.md
 ├── config.toml
+├── main.py
+├── cor_generative_extraction.py
 ├── ppl_scrapper.py
 ├── prompts.yaml
 ├── utils.py
@@ -36,7 +40,7 @@ perplexity-company-scraper/
 
 ## Installation & Dependencies
 
-This project uses [uv](https://github.com/astral-sh/uv) for dependency management (faster and safer than pip).
+This project uses [uv](https://github.com/astral-sh/uv) for dependency management.
 
 1. Clone the repository:
    ```bash
@@ -69,11 +73,14 @@ Example:
 ```toml
 [data]
 input_csv_path = "data/input/companies.csv"   # Path to input CSV
-target_column = "Cuenta"                      # Column with company name
+target_column = "Cuenta"                      # Column with the company name
 
 [model]
 model_name = "sonar-pro"                      # Perplexity model to use
 temperature = 0.1
+
+[chain_of_responsability]
+model_chain = ["gemini", "perplexity", "fallback"] # Order of handlers
 
 [output]
 output_csv_path = "data/output/results.json"  # Output path
@@ -92,26 +99,35 @@ Define prompts for each model and the expected response format. You can adapt th
 2. Place your companies CSV file in `data/input/companies.csv` (or the path you define).
 3. Run the main script:
    ```bash
-   python ppl_scrapper.py
+   python main.py
    ```
 
-The script will process the companies, query the API, and save the results in `data/output/results.json`.
+The script will process the companies, query the models in the order defined by the chain of responsibility, and save the results in the output file.
+
+## Chain of Responsibility: How does it work?
+
+The main flow (`main.py`) builds a chain of handlers (Gemini, Perplexity, Fallback) according to the configuration. Each handler tries to extract the company data:
+
+- If the first model fails, the next one automatically takes over.
+- The `Fallback` handler ensures a response is always returned, even if it's an error.
+- You can modify the order and models in the `[chain_of_responsability]` section of `config.toml`.
 
 ## Output
 
 The output file is a CSV with structured data for each company, including the fields required by the JSON schema:
 
 - `Cuenta`: Original company name
-- `CIF`, `Razón Social`, `Teléfono`, `Sitio Web`, `CNAE`, `Descripción de CNAE`, `Sector`, `Número de Empleados min`, `Número de Empleados max`, `Ingresos anuales min`, `Ingresos anuales max`, `Pais`, `Estado/Provincia`, `Ciudad`, `Direccion`
+- `CIF`, `Razón Social`, `Teléfono`, `Sitio Web`, `CNAE`, `Descripción de CNAE`, `Sector`, `Número de Empleados min`, `Número de Empleados max`, `Ingresos anuales min`, `Ingresos anuales max`, `Pais`, `Estado/Provincia`, `Ciudad`, `Direccion`, `request_cost`
 
 ## Main Scripts
 
-- `ppl_scrapper.py`: Main script that loads data, queries the API, and saves results.
-- `utils.py`: Helper functions for loading prompts and other utilities.
+- `main.py`: Main script that loads data, builds the chain of handlers, and saves results.
+- `cor_generative_extraction.py`: Implements the handlers and the Chain of Responsibility logic.
+- `utils.py`: Helper functions for loading prompts and utilities.
 
 ## Advanced Notes
 
-- You can modify prompts in `prompts.yaml` to adapt model behavior.
+- You can modify the prompts in `prompts.yaml` to adapt model behavior.
 - The script uses the column defined in `target_column` to look up the company name.
 - Debug mode shows the cost of each query if `debug_mode = true` in `config.toml`.
 
