@@ -13,5 +13,5 @@ temperature = 0.1
 # Output configuration
 output_csv_path = "data/output/results.json"
 
-[debug]
-debug_mode = false
+[chain_of_responsability]
+model_chain = ["gemini", "perplexity", "fallback"]
