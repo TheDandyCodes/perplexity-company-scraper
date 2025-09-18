@@ -3,7 +3,8 @@
 input_csv_path = "data/input/companies.csv"
 
 # Column name in the CSV to use for API queries
-target_column = "Cuenta"
+[target_column]
+col_name = "Cuenta"
 
 [model]
 model_name = "sonar-pro"
