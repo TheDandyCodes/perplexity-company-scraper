@@ -15,7 +15,9 @@ PROMPTS = load_prompts("prompts.yaml")
 load_dotenv()
 
 
-def create_perplexity_company_request(api_key, system_prompt, user_prompt, json_schema, model_name) -> dict:
+def create_perplexity_company_request(
+    api_key, system_prompt, user_prompt, json_schema, model_name
+) -> dict:
     """Create a request to the Perplexity API to obtain information about a company.
 
     Parameters
@@ -44,7 +46,8 @@ def create_perplexity_company_request(api_key, system_prompt, user_prompt, json_
         "temperature": 0.1,
         "messages": [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}],
+            {"role": "user", "content": user_prompt},
+        ],
         "response_format": {
             "type": "json_schema",
             "json_schema": {"schema": json_schema},
@@ -93,10 +96,11 @@ company_info_json_schema = {
 if __name__ == "__main__":
     import random
     import time
+
     from tqdm import tqdm
 
     companies_df = pd.read_csv(CONFIG["data"]["input_csv_path"]).head(2)
-
+    target_col = CONFIG["target_column"]["col_name"]
     required_cols = list(company_info_json_schema["properties"].keys())
 
     completed_jsonl = []
@@ -109,13 +113,13 @@ if __name__ == "__main__":
         ]
         if missing:
             prompt = PROMPTS["models"][CONFIG["model"]["model_name"]]["user"].format(
-                company_name=row["Cuenta"]
+                company_name=row[target_col]
             )
             response = create_perplexity_company_request(
                 os.getenv("PERPLEXITY_API_KEY"),
                 PROMPTS["models"][CONFIG["model"]["model_name"]]["system"],
                 PROMPTS["models"][CONFIG["model"]["model_name"]]["user"].format(
-                    company_name=row["Cuenta"]
+                    company_name=row[target_col]
                 ),
                 company_info_json_schema,
                 CONFIG["model"]["model_name"],
@@ -126,14 +130,16 @@ if __name__ == "__main__":
             # Print cost if in debug mode
             if CONFIG["debug"]["debug_mode"]:
                 print("\n\033[92m{} $ used in this request\033[0m\n".format(total_cost))
-    
+
             content = response["choices"][0]["message"]["content"]
             try:
                 info = json.loads(content)
 
                 # Process range fields
                 for range_col in ["Número de Empleados", "Ingresos anuales"]:
-                    if info.get(range_col, None) is not None and isinstance(info[range_col], list):
+                    if info.get(range_col, None) is not None and isinstance(
+                        info[range_col], list
+                    ):
                         if len(info[range_col]) > 1:
                             info[f"{range_col} min"] = info[range_col][0]
                             info[f"{range_col} max"] = info[range_col][-1]
@@ -142,7 +148,7 @@ if __name__ == "__main__":
                             info[f"{range_col} max"] = info[range_col][0]
 
                 jsonl = {
-                    "Cuenta": row["Cuenta"],
+                    target_col: row[target_col],
                     **info,
                 }
                 completed_jsonl.append(jsonl)
