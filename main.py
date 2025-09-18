@@ -5,7 +5,7 @@ import pandas as pd
 import toml
 from dotenv import load_dotenv
 
-from cor_generative_extraction import FallbackHandler, GeminiHandler, PerplexityHandler
+from handlers import FallbackHandler, GeminiHandler, PerplexityHandler
 from utils import load_prompts
 
 load_dotenv()
