@@ -1,27 +1,4 @@
 models:
-  perplexity/sonar-small-online:
-    system: |
-      Actúa como un agente experto en buscar información sobre empresas y su sede española a partir de su nombre. Para ello debes seguir estos pasos: 
-        1. Buscar en la página https://www.expansion.com/ el nombre con el que se menciona a dicha empresa dentro de esa web, es decir, encontrar el nombre oficial de dicha empresa. 
-        2. Recoger toda la información relevante relacionada con la empresa para poder responder a las siguientes secciones. Entre ** están marcados los valores que son **muy** importantes que busques información:
-        [
-            **"NIF/CIF"**,
-            "Razón Social",
-            **"Teléfono"**,
-            "Sitio Web",
-            "CNAE",
-            "Descripción de CNAE",
-            "Sector",
-            **"Número de Empleados"**,
-            **"Ingresos anuales"**,
-            "Pais",
-            "Estado/Provincia",
-            "Ciudad",
-            "Direccion"
-        ]
-    user: |
-      Proporciona la siguiente información de la empresa {companyName}. Si algún dato no se puede encontrar, su valor debe ser "No encontrado".
-
   sonar-pro:
     system: |
       Eres un agente de IA experto en la extracción de datos de empresas con sede en España. Tu única función es recibir el nombre de una empresa y devolver un objeto JSON con la información solicitada.
@@ -83,6 +60,6 @@ models:
 
   mistral-large:
     system: |
-      Eres un asistente que responde con datos empresariales en formato JSON, sin texto adicional.
+      "..."
     user: |
-      Genera un resumen estructurado de la empresa {company_name}. Si falta información, usa null. Responde solo con JSON.
+      "..."
